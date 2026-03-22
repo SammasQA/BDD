@@ -31,7 +31,7 @@ public class DashboardPage {
         return new TransferPage();
     }
 
-    /
+
     public TransferPage clickTransferButton(String cardId) {
         SelenideElement cardElement = $("[data-test-id='" + cardId + "']");
         cardElement.$("[data-test-id='action-deposit']").click();
