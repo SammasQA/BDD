@@ -12,12 +12,12 @@ import static com.codeborne.selenide.WebDriverConditions.url;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class TransferTest {
-    private static final String sutUrl = "http://localhost:8080";
+    private static final String sutUrl = "http://localhost:9999";
     private static final String login = "vasya";
     private static final String password = "qwerty123";
     private static final String code = "12345";
 
-    // Используем номера карт, как они отображаются в интерфейсе
+
     private static final String card1Number = "5559 0000 0000 0001";
     private static final String card2Number = "5559 0000 0000 0002";
 
@@ -25,10 +25,10 @@ public class TransferTest {
 
     @BeforeAll
     static void startSut() throws IOException {
-        // Запускаем SUT
+
         String jarPath = "artifacts/app-ibank-build-for-testers.jar";
         sutProcess = new ProcessBuilder("java", "-jar", jarPath).start();
-        // Даём время на инициализацию
+
         try {
             Thread.sleep(10000);
         } catch (InterruptedException e) {
@@ -59,24 +59,23 @@ public class TransferTest {
     void shouldTransferMoneyBetweenOwnCards() {
         DashboardPage dashboardPage = new DashboardPage();
 
-        // Получаем балансы до перевода (по индексам, так как порядок карт известен)
-        int balanceCard1Before = dashboardPage.getCardBalance(0);
-        int balanceCard2Before = dashboardPage.getCardBalance(1);
+        int balanceCard1Before = dashboardPage.getCardBalance(0); // отправитель
+        int balanceCard2Before = dashboardPage.getCardBalance(1); // получатель
 
         int transferAmount = 3000;
 
-        // Выбираем первую карту для пополнения (нажатие на "Пополнить")
-        TransferPage transferPage = dashboardPage.clickTransferButton(0);
-        // Выполняем перевод на вторую карту
-        dashboardPage = transferPage.transfer(transferAmount, card2Number);
+
+        TransferPage transferPage = dashboardPage.clickTransferButton(1);
+
+        dashboardPage = transferPage.transfer(transferAmount, card1Number);
 
         int balanceCard1After = dashboardPage.getCardBalance(0);
         int balanceCard2After = dashboardPage.getCardBalance(1);
 
         assertEquals(balanceCard1Before - transferAmount, balanceCard1After,
-                "Баланс первой карты должен уменьшиться");
+                "Баланс карты-отправителя должен уменьшиться");
         assertEquals(balanceCard2Before + transferAmount, balanceCard2After,
-                "Баланс второй карты должен увеличиться");
+                "Баланс карты-получателя должен увеличиться");
     }
 
 

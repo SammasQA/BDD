@@ -8,7 +8,7 @@ public class TransferPage {
     private SelenideElement fromField = $("[data-test-id=from] input");   // отправитель
     private SelenideElement transferButton = $("[data-test-id=action-transfer]");
 
-    // Выполнить перевод: сумма и номер карты получателя
+
     public DashboardPage transfer(int amount, String toCardNumber) {
         amountField.setValue(String.valueOf(amount));
         fromField.setValue(toCardNumber);
