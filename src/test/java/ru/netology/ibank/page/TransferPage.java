@@ -5,13 +5,13 @@ import static com.codeborne.selenide.Selenide.$;
 
 public class TransferPage {
     private SelenideElement amountField = $("[data-test-id=amount] input");
-    private SelenideElement fromField = $("[data-test-id=from] input");   // отправитель
+    private SelenideElement fromField = $("[data-test-id=from] input");
     private SelenideElement transferButton = $("[data-test-id=action-transfer]");
 
-
-    public DashboardPage transfer(int amount, String toCardNumber) {
+    // fromCardNumber – номер карты, с которой переводим
+    public DashboardPage transfer(int amount, String fromCardNumber) {
         amountField.setValue(String.valueOf(amount));
-        fromField.setValue(toCardNumber);
+        fromField.setValue(fromCardNumber);
         transferButton.click();
         return new DashboardPage();
     }

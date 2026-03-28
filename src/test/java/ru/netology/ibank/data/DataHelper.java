@@ -21,4 +21,13 @@ public class DataHelper {
     public static String getSecondCardNumber() {
         return "5559 0000 0000 0002";
     }
+
+
+    public static String getFirstCardMaskedNumber() {
+        return "**** **** **** 0001";
+    }
+
+    public static String getSecondCardMaskedNumber() {
+        return "**** **** **** 0002";
+    }
 }

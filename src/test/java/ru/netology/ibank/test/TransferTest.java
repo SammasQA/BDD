@@ -7,7 +7,6 @@ import ru.netology.ibank.page.*;
 import static com.codeborne.selenide.Selenide.open;
 import static com.codeborne.selenide.Selenide.webdriver;
 import static com.codeborne.selenide.WebDriverConditions.url;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class TransferTest {
 
@@ -29,27 +28,21 @@ public class TransferTest {
     void shouldTransferMoneyBetweenOwnCards() {
         DashboardPage dashboardPage = new DashboardPage();
 
+        String senderCard = DataHelper.getFirstCardMaskedNumber();
+        String receiverCard = DataHelper.getSecondCardMaskedNumber();
 
-        int senderIndex = 0;
-        int receiverIndex = 1;
-        String senderCardNumber = DataHelper.getFirstCardNumber();
-        String receiverCardNumber = DataHelper.getSecondCardNumber();
-
-        int balanceSenderBefore = dashboardPage.getCardBalance(senderIndex);
-        int balanceReceiverBefore = dashboardPage.getCardBalance(receiverIndex);
+        int balanceSenderBefore = dashboardPage.getCardBalance(senderCard);
+        int balanceReceiverBefore = dashboardPage.getCardBalance(receiverCard);
 
         int transferAmount = Math.min(balanceSenderBefore / 2, 5000);
 
-        TransferPage transferPage = dashboardPage.clickTransferButton(receiverIndex);
-        dashboardPage = transferPage.transfer(transferAmount, senderCardNumber);
+        TransferPage transferPage = dashboardPage.clickTransferButton(receiverCard);
+        // В TransferPage метод transfer теперь принимает номер карты-отправителя
+        dashboardPage = transferPage.transfer(transferAmount, DataHelper.getFirstCardNumber());
 
-        int balanceSenderAfter = dashboardPage.getCardBalance(senderIndex);
-        int balanceReceiverAfter = dashboardPage.getCardBalance(receiverIndex);
 
-        assertEquals(balanceSenderBefore - transferAmount, balanceSenderAfter,
-                "Баланс карты-отправителя должен уменьшиться на сумму перевода");
-        assertEquals(balanceReceiverBefore + transferAmount, balanceReceiverAfter,
-                "Баланс карты-получателя должен увеличиться на сумму перевода");
+        dashboardPage.verifyCardBalance(senderCard, balanceSenderBefore - transferAmount);
+        dashboardPage.verifyCardBalance(receiverCard, balanceReceiverBefore + transferAmount);
     }
 
     @Test
@@ -57,24 +50,19 @@ public class TransferTest {
     void shouldNotTransferMoreThanBalance() {
         DashboardPage dashboardPage = new DashboardPage();
 
-        int senderIndex = 0;
-        int receiverIndex = 1;
-        String senderCardNumber = DataHelper.getFirstCardNumber();
+        String senderCard = DataHelper.getFirstCardMaskedNumber();
+        String receiverCard = DataHelper.getSecondCardMaskedNumber();
 
-        int balanceSenderBefore = dashboardPage.getCardBalance(senderIndex);
-        int balanceReceiverBefore = dashboardPage.getCardBalance(receiverIndex);
+        int balanceSenderBefore = dashboardPage.getCardBalance(senderCard);
+        int balanceReceiverBefore = dashboardPage.getCardBalance(receiverCard);
 
         int transferAmount = balanceSenderBefore + 1000;
 
-        TransferPage transferPage = dashboardPage.clickTransferButton(receiverIndex);
-        dashboardPage = transferPage.transfer(transferAmount, senderCardNumber);
+        TransferPage transferPage = dashboardPage.clickTransferButton(receiverCard);
+        dashboardPage = transferPage.transfer(transferAmount, DataHelper.getFirstCardNumber());
 
-        int balanceSenderAfter = dashboardPage.getCardBalance(senderIndex);
-        int balanceReceiverAfter = dashboardPage.getCardBalance(receiverIndex);
-
-        assertEquals(balanceSenderBefore, balanceSenderAfter,
-                "Баланс карты-отправителя не должен измениться при превышении суммы перевода");
-        assertEquals(balanceReceiverBefore, balanceReceiverAfter,
-                "Баланс карты-получателя не должен измениться при превышении суммы перевода");
+        // Балансы не должны измениться
+        dashboardPage.verifyCardBalance(senderCard, balanceSenderBefore);
+        dashboardPage.verifyCardBalance(receiverCard, balanceReceiverBefore);
     }
 }
