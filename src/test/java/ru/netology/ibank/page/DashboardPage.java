@@ -2,8 +2,10 @@ package ru.netology.ibank.page;
 
 import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
+
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.$$;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class DashboardPage {
 
@@ -11,33 +13,25 @@ public class DashboardPage {
     private final String balanceStart = "баланс: ";
     private final String balanceFinish = " р.";
 
-
     public int getCardBalance(int index) {
         String text = cards.get(index).text();
         return extractBalance(text);
     }
 
-
-    public int getCardBalance(String cardId) {
-        SelenideElement cardElement = $("[data-test-id='" + cardId + "']");
-        String text = cardElement.text();
-        return extractBalance(text);
+    public int getCardIndexByNumber(String cardNumber) {
+        for (int i = 0; i < cards.size(); i++) {
+            if (cards.get(i).text().contains(cardNumber)) {
+                return i;
+            }
+        }
+        throw new IllegalArgumentException("Карта с номером " + cardNumber + " не найдена");
     }
-
 
     public TransferPage clickTransferButton(int index) {
         SelenideElement cardElement = cards.get(index);
         cardElement.$("[data-test-id='action-deposit']").click();
         return new TransferPage();
     }
-
-
-    public TransferPage clickTransferButton(String cardId) {
-        SelenideElement cardElement = $("[data-test-id='" + cardId + "']");
-        cardElement.$("[data-test-id='action-deposit']").click();
-        return new TransferPage();
-    }
-
 
     private int extractBalance(String text) {
         int start = text.indexOf(balanceStart);
@@ -47,5 +41,16 @@ public class DashboardPage {
         }
         String balanceStr = text.substring(start + balanceStart.length(), finish).trim();
         return Integer.parseInt(balanceStr);
+    }
+
+    public void verifyTransfer(int fromIndex, int toIndex, int amount,
+                               int expectedFromBefore, int expectedToBefore) {
+        int balanceFromAfter = getCardBalance(fromIndex);
+        int balanceToAfter = getCardBalance(toIndex);
+
+        assertEquals(expectedFromBefore - amount, balanceFromAfter,
+                "Баланс карты-отправителя должен уменьшиться на сумму перевода");
+        assertEquals(expectedToBefore + amount, balanceToAfter,
+                "Баланс карты-получателя должен увеличиться на сумму перевода");
     }
 }

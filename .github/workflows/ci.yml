@@ -22,8 +22,6 @@ jobs:
         # & означает, что в фоновом режиме не блокируем терминал для запуска тестов,
         # обязательно должен быть для запуска SUT в CI
         run: java -jar ./artifacts/app-ibank-build-for-testers.jar &
-      - name: Wait for SUT to start
-        run: sleep 10
         # Запускаем автотесты
         # Для проектов на базе Selenide необходимо добавить параметр для запуска браузера
         # в headless режиме -Dselenide.headless=true, параметр --info должен остаться
