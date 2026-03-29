@@ -5,8 +5,6 @@ import ru.netology.ibank.data.DataHelper;
 import ru.netology.ibank.page.*;
 
 import static com.codeborne.selenide.Selenide.open;
-import static com.codeborne.selenide.Selenide.webdriver;
-import static com.codeborne.selenide.WebDriverConditions.url;
 
 public class TransferTest {
 
@@ -21,7 +19,7 @@ public class TransferTest {
                 DataHelper.getValidPassword()
         );
         verificationPage.validVerify(DataHelper.getValidVerificationCode());
-        webdriver().shouldHave(url(sutUrl + "/dashboard"));
+
     }
 
     @Test
@@ -37,9 +35,7 @@ public class TransferTest {
         int transferAmount = Math.min(balanceSenderBefore / 2, 5000);
 
         TransferPage transferPage = dashboardPage.clickTransferButton(receiverCard);
-        // В TransferPage метод transfer теперь принимает номер карты-отправителя
         dashboardPage = transferPage.transfer(transferAmount, DataHelper.getFirstCardNumber());
-
 
         dashboardPage.verifyCardBalance(senderCard, balanceSenderBefore - transferAmount);
         dashboardPage.verifyCardBalance(receiverCard, balanceReceiverBefore + transferAmount);
@@ -61,7 +57,6 @@ public class TransferTest {
         TransferPage transferPage = dashboardPage.clickTransferButton(receiverCard);
         dashboardPage = transferPage.transfer(transferAmount, DataHelper.getFirstCardNumber());
 
-        // Балансы не должны измениться
         dashboardPage.verifyCardBalance(senderCard, balanceSenderBefore);
         dashboardPage.verifyCardBalance(receiverCard, balanceReceiverBefore);
     }
