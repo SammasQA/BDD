@@ -9,6 +9,7 @@ import static com.codeborne.selenide.Selenide.open;
 public class TransferTest {
 
     private static final String sutUrl = "http://localhost:9999";
+    private DashboardPage dashboardPage;   // сохраняем логин
 
     @BeforeEach
     void loginAndGoToDashboard() {
@@ -18,14 +19,12 @@ public class TransferTest {
                 DataHelper.getValidLogin(),
                 DataHelper.getValidPassword()
         );
-        verificationPage.validVerify(DataHelper.getValidVerificationCode());
 
+        dashboardPage = verificationPage.validVerify(DataHelper.getValidVerificationCode());
     }
 
     @Test
     void shouldTransferMoneyBetweenOwnCards() {
-        DashboardPage dashboardPage = new DashboardPage();
-
         String senderCard = DataHelper.getFirstCardMaskedNumber();
         String receiverCard = DataHelper.getSecondCardMaskedNumber();
 
@@ -44,8 +43,6 @@ public class TransferTest {
     @Test
     @Disabled("Дефект")
     void shouldNotTransferMoreThanBalance() {
-        DashboardPage dashboardPage = new DashboardPage();
-
         String senderCard = DataHelper.getFirstCardMaskedNumber();
         String receiverCard = DataHelper.getSecondCardMaskedNumber();
 
