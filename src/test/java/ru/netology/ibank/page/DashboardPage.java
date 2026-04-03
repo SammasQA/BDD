@@ -2,6 +2,8 @@ package ru.netology.ibank.page;
 
 import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
+
+import static com.codeborne.selenide.Condition.text;
 import static com.codeborne.selenide.Condition.visible;
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.$$;
@@ -12,7 +14,7 @@ public class DashboardPage {
     private final String balanceStart = "баланс: ";
     private final String balanceFinish = " р.";
 
-    // Конструктор ждёт загрузки страницы (появление хотя бы одной карты)
+    // Конструктор
     public DashboardPage() {
         cards.first().shouldBe(visible);
     }
